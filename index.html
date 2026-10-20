@@ -1,0 +1,419 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YOURBRAND — Real-time meme coin Twitter tracker</title>
+<meta name="description" content="Track meme coin alpha on X in real time. Spot calls, rugs, and narratives before they trend." />
+<style>
+  :root{
+    --bg:#0d0a0f;
+    --bg-2:#140f18;
+    --card:#1a1220;
+    --card-2:#22182b;
+    --line:#2e2138;
+    --text:#f3eaf6;
+    --muted:#a690b3;
+    --pink:#ff5fa8;
+    --pink-2:#ff8fc4;
+    --pink-deep:#c9226e;
+    --green:#2ee6a8;
+    --radius:16px;
+    --max:1140px;
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font);
+    background:
+      radial-gradient(1100px 600px at 75% -10%, rgba(255,95,168,.20), transparent 60%),
+      radial-gradient(900px 500px at 5% 0%, rgba(201,34,110,.12), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:12.5px;font-weight:600;letter-spacing:.02em;
+    padding:6px 12px;border-radius:999px;
+    border:1px solid var(--line);background:var(--card);
+    color:var(--muted);
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink)}
+
+  .banner{
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(90deg, rgba(255,95,168,.16), rgba(201,34,110,.08));
+    font-size:13.5px;color:var(--muted);text-align:center;padding:9px 16px;
+  }
+  .banner b{color:var(--text)}
+
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(12px);
+    background:rgba(13,10,15,.72);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:18px}
+  .logo-mark{
+    width:28px;height:28px;border-radius:8px;
+    background:linear-gradient(135deg,var(--pink),var(--pink-2));
+    display:grid;place-items:center;font-size:14px;color:#0d0a0f;font-weight:900;
+  }
+  nav.links{display:flex;gap:26px;font-size:14px;color:var(--muted)}
+  nav.links a:hover{color:var(--text)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:11px 18px;border-radius:12px;font-weight:700;font-size:14px;
+    border:1px solid transparent;cursor:pointer;transition:.15s transform,.15s background;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;box-shadow:0 8px 30px rgba(255,95,168,.35)}
+  .btn-ghost{background:var(--card);border-color:var(--line);color:var(--text)}
+  @media(max-width:820px){nav.links{display:none}}
+
+  .hero{padding:96px 0 72px;text-align:center}
+  .hero h1{
+    font-size:clamp(40px,7vw,76px);line-height:1.02;letter-spacing:-.035em;font-weight:800;
+    margin:22px 0 18px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(120deg,var(--pink),var(--pink-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{max-width:620px;margin:0 auto 34px;color:var(--muted);font-size:18px}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+    max-width:720px;margin:56px auto 0;
+  }
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .stat .num{font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--pink-2)}
+  .stat .lbl{font-size:12.5px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+  @media(max-width:640px){.stats{grid-template-columns:1fr}}
+
+  section{padding:80px 0}
+  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--pink)}
+  h2{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.025em;margin:10px 0 14px}
+  .sub{color:var(--muted);max-width:560px}
+  .section-head{margin-bottom:44px}
+
+  .preview{
+    background:linear-gradient(180deg,var(--card),var(--bg-2));
+    border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .preview-bar{
+    display:flex;align-items:center;gap:8px;padding:14px 18px;
+    border-bottom:1px solid var(--line);background:rgba(255,255,255,.02);
+  }
+  .preview-bar .b{width:11px;height:11px;border-radius:50%;background:#3a2a44}
+  .preview-bar .b.r{background:#ff5f57}.preview-bar .b.y{background:#febc2e}.preview-bar .b.g{background:#28c840}
+  .preview-bar .title{margin-left:10px;font-size:13px;color:var(--muted)}
+  .feed{display:grid;grid-template-columns:1.25fr .75fr;gap:0}
+  @media(max-width:820px){.feed{grid-template-columns:1fr}}
+  .feed-main{padding:22px}
+  .demo-tag{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+            color:var(--pink);border:1px solid rgba(255,95,168,.35);background:rgba(255,95,168,.08);
+            padding:3px 8px;border-radius:999px;margin-bottom:14px;display:inline-block}
+  .tweet{
+    border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--card);
+    margin-bottom:14px;
+  }
+  .tweet + .tweet{opacity:.88}
+  .tweet-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink-2));
+      display:grid;place-items:center;font-weight:800;font-size:14px;color:#0d0a0f}
+  .tweet-head .who{font-weight:700;font-size:14px}
+  .tweet-head .handle{color:var(--muted);font-size:12.5px}
+  .tweet p{font-size:14.5px;color:#e6d8ee}
+  .tweet .meta{margin-top:10px;display:flex;gap:16px;font-size:12px;color:var(--muted)}
+  .new{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--pink);
+       border:1px solid rgba(255,95,168,.3);background:rgba(255,95,168,.08);padding:3px 9px;border-radius:999px;margin-bottom:10px}
+  .feed-side{border-left:1px solid var(--line);padding:22px;background:rgba(255,255,255,.015)}
+  @media(max-width:820px){.feed-side{border-left:0;border-top:1px solid var(--line)}}
+  .side-title{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px}
+  .chip{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);
+        border-radius:10px;font-size:13px;margin-bottom:8px;background:var(--card)}
+  .chip .k{color:var(--muted)}
+  .chip .v{font-weight:700}
+  .pos{color:var(--green)} .neg{color:#ff6b6b}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:960px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.grid{grid-template-columns:1fr}}
+  .feature{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px;transition:.18s border-color,.18s transform;
+  }
+  .feature:hover{border-color:#4a3055;transform:translateY(-3px)}
+  .ficon{
+    width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin-bottom:16px;
+    background:linear-gradient(135deg,rgba(255,95,168,.25),rgba(255,143,196,.12));
+    border:1px solid var(--line);font-size:20px;
+  }
+  .feature h3{font-size:17px;letter-spacing:-.01em;margin-bottom:8px}
+  .feature p{font-size:14px;color:var(--muted)}
+
+  .cta{
+    text-align:center;border:1px solid var(--line);border-radius:24px;padding:64px 24px;
+    background:radial-gradient(600px 300px at 50% 0%, rgba(255,95,168,.22), transparent 70%), var(--card);
+  }
+  .cta h2{margin-bottom:10px}
+  .cta p{color:var(--muted);max-width:520px;margin:0 auto 28px}
+  .email-row{display:flex;gap:10px;max-width:460px;margin:0 auto;flex-wrap:wrap}
+  .email-row input{
+    flex:1;min-width:200px;padding:13px 16px;border-radius:12px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--text);font-size:14px;outline:none;
+  }
+  .email-row input:focus{border-color:var(--pink)}
+
+  .platforms{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+  .plat{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 18px;font-weight:700;font-size:14px}
+
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:820px){.contact-grid{grid-template-columns:1fr}}
+  form.contact{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+  .field input,.field select,.field textarea{
+    width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+    background:var(--bg-2);color:var(--text);font-size:14px;font-family:inherit;outline:none;
+  }
+  .field textarea{resize:vertical;min-height:110px}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pink)}
+  .form-note{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .toast{
+    display:none;margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13.5px;
+    background:rgba(46,230,168,.1);border:1px solid rgba(46,230,168,.35);color:var(--green);
+  }
+  .toast.show{display:block}
+
+  footer{border-top:1px solid var(--line);padding:40px 0;color:var(--muted);font-size:13.5px}
+  .foot-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+  .foot-links{display:flex;gap:20px}
+  .foot-links a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+  <div class="banner">
+    <b>Early access:</b> We're finalizing the full launch — some features are live below.
+  </div>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="logo" href="#top"><span class="logo-mark">Y</span> YOURBRAND</a>
+      <nav class="links">
+        <a href="#preview">Tracker</a>
+        <a href="#features">Features</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn btn-primary" href="#contact">Get early access</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap">
+      <span class="pill"><span class="dot"></span> Now in early access</span>
+      <h1>Catch meme coin alpha<br><span class="grad">before it trends.</span></h1>
+      <p class="lead">
+        A real-time Twitter tracker for meme coin traders. Follow the handles that matter,
+        see new calls as they're posted, and filter the noise — all in one feed.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contact">Join the waitlist</a>
+        <a class="btn btn-ghost" href="#features">See features →</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="num">3K+</div><div class="lbl">Active users</div></div>
+        <div class="stat"><div class="num">5K+</div><div class="lbl">Registrations</div></div>
+        <div class="stat"><div class="num">SOL · BNB</div><div class="lbl">Supported chains</div></div>
+      </div>
+    </section>
+
+    <section id="preview" class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Live tracker</span>
+        <h2>See every call the second it's posted.</h2>
+        <p class="sub">Track any X handle or community in real time. Posts hit your feed instantly — not minutes later.</p>
+      </div>
+
+      <div class="preview">
+        <div class="preview-bar">
+          <span class="b r"></span><span class="b y"></span><span class="b g"></span>
+          <span class="title">YOURBRAND · live feed</span>
+        </div>
+        <div class="feed">
+          <div class="feed-main">
+            <span class="demo-tag">Demo preview — sample content</span>
+
+            <div class="new"><span class="dot"></span> New · just now</div>
+            <article class="tweet">
+              <div class="tweet-head">
+                <div class="av">A</div>
+                <div>
+                  <div class="who">Alpha Sniper</div>
+                  <div class="handle">@sample_alpha · 854.4K</div>
+                </div>
+              </div>
+              <p>👀 Watching this one closely — volume just woke up and the chart looks primed. Sample post for the preview only.</p>
+              <div class="meta"><span>💬 128</span><span>🔁 42</span><span>❤️ 1.2K</span></div>
+            </article>
+
+            <article class="tweet">
+              <div class="tweet-head">
+                <div class="av">B</div>
+                <div>
+                  <div class="who">Degen Benja</div>
+                  <div class="handle">@sample_benja · 46.9K</div>
+                </div>
+              </div>
+              <p>wait, toad is a spy? 🐸 — placeholder tweet to show how feeds render here.</p>
+              <div class="meta"><span>💬 33</span><span>🔁 11</span><span>❤️ 402</span></div>
+            </article>
+
+            <article class="tweet">
+              <div class="tweet-head">
+                <div class="av">C</div>
+                <div>
+                  <div class="who">Narrative Hunter</div>
+                  <div class="handle">@sample_narr · 212.1K</div>
+                </div>
+              </div>
+              <p>New meta loading? Everything I'm seeing points to a rotation. Sample content — not a real post.</p>
+              <div class="meta"><span>💬 76</span><span>🔁 28</span><span>❤️ 890</span></div>
+            </article>
+          </div>
+
+          <aside class="feed-side">
+            <div class="side-title">Signal panel</div>
+            <div class="chip"><span class="k">Tracked handles</span><span class="v">128</span></div>
+            <div class="chip"><span class="k">Posts / min</span><span class="v pos">+42</span></div>
+            <div class="chip"><span class="k">Rug alerts</span><span class="v neg">3</span></div>
+            <div class="chip"><span class="k">Latency</span><span class="v">&lt; 2s</span></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What's inside</span>
+        <h2>Built for meme coin traders.</h2>
+      </div>
+      <div class="grid">
+        <div class="feature">
+          <div class="ficon">⚡</div>
+          <h3>CT / Twitter Tracker</h3>
+          <p>Monitor influencers, communities, and custom feeds in real time. See calls as they happen, not five minutes later.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon">📈</div>
+          <h3>Paper Trade Memecoins</h3>
+          <p>Practice with zero risk. Simulate entries and exits on live SOL and BNB prices before you go live.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon">🛡️</div>
+          <h3>Rug &amp; Risk Scanner</h3>
+          <p>Scan any coin for red flags — honeypots, bundled supply, locked liquidity, dev dumps. Know before you ape.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon">🧩</div>
+          <h3>Browser Extension</h3>
+          <p>Overlay data on any tab, get instant alerts, and track without switching windows.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon">💬</div>
+          <h3>X Community Tracker</h3>
+          <p>Add any community URL and get every post in one real-time feed, all in one place.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon">🔔</div>
+          <h3>Custom Alerts</h3>
+          <p>Set keywords, handles, or coins and get pinged the moment your signal fires.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="cta">
+        <h2>Ready when you are.</h2>
+        <p>Join the traders already catching calls before they moon.</p>
+        <form class="email-row" onsubmit="event.preventDefault(); this.reset(); alert('Placeholder — connect a real backend to collect emails.');">
+          <input type="email" placeholder="you@email.com" required />
+          <button class="btn btn-primary" type="submit">Join waitlist</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="platforms" class="wrap" style="padding-top:0">
+      <div style="text-align:center">
+        <span class="eyebrow">Supported platforms</span>
+        <div class="platforms">
+          <span class="plat">Axiom</span>
+          <span class="plat">Photon</span>
+          <span class="plat">Padre / Terminal</span>
+          <span class="plat">Custom RPC</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="wrap">
+      <div class="contact-grid">
+        <div>
+          <span class="eyebrow">Contact</span>
+          <h2>Get in touch.</h2>
+          <p class="sub">Questions, partnerships, or bug reports — we reply within 24 hours.</p>
+        </div>
+        <form class="contact" onsubmit="event.preventDefault(); document.getElementById('toast').classList.add('show'); this.reset();">
+          <div class="field">
+            <label for="email">Your email</label>
+            <input id="email" type="email" placeholder="you@email.com" required />
+          </div>
+          <div class="field">
+            <label for="cat">Category</label>
+            <select id="cat" required>
+              <option value="">Select…</option>
+              <option>Support</option>
+              <option>Partnership</option>
+              <option>Bug report</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="msg">Message</label>
+            <textarea id="msg" placeholder="How can we help?" required></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit" style="width:100%">Send message</button>
+          <div class="form-note">Front-end demo — connect Formspree/Netlify Forms to receive real submissions.</div>
+          <div class="toast" id="toast">Message captured (demo). Connect a backend to actually receive it.</div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <div>© <span id="yr"></span> YOURBRAND. All rights reserved.</div>
+      <div class="foot-links">
+        <a href="#features">Features</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
